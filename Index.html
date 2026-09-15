@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CROWN GYM 👑</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:#eee;font-family:Arial,sans-serif}
+header{padding:25px 18px;background:#111;border-bottom:1px solid #333}
+h1{margin:0;color:#d6ad45;font-size:30px}
+.sub{color:#999;margin-top:5px}
+nav{display:flex;gap:7px;overflow:auto;padding:12px;background:#0d0d0d}
+nav button{white-space:nowrap;background:#191919;color:#ddd;border:1px solid #333;border-radius:10px;padding:11px}
+nav button.active{background:#d6ad45;color:#080808}
+main{padding:15px;max-width:750px;margin:auto}
+.card{background:#121212;border:1px solid #292929;border-radius:16px;padding:17px;margin-bottom:15px}
+.gold{color:#d6ad45}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#191919;border-radius:12px;padding:14px;text-align:center}
+.big{font-size:25px;font-weight:bold}
+.progress{height:14px;background:#292929;border-radius:20px;overflow:hidden;margin-top:10px}
+.bar{height:100%;background:#d6ad45;width:0}
+.exercise{border-left:4px solid #d6ad45;padding:13px;margin:10px 0;background:#191919;border-radius:10px}
+.exercise h3{margin:0 0 5px}
+.tag{color:#d6ad45;font-size:13px}
+input{background:#0b0b0b;color:white;border:1px solid #444;border-radius:8px;padding:9px;width:70px;margin:4px}
+button.action{background:#d6ad45;border:0;border-radius:9px;padding:10px 14px;font-weight:bold;margin-top:6px}
+.done{background:#244d2b!important;color:white}
+.hidden{display:none}
+select{width:100%;padding:12px;background:#191919;color:white;border:1px solid #444;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>👑 CROWN GYM</h1>
+<div class="sub">MAX MASS • 58 KG → 70 KG</div>
+</header>
+
+<nav>
+<button onclick="show('home')" class="active">Bosh</button>
+<button onclick="show('workout')">Mashqlar</button>
+<button onclick="show('food')">Ovqat</button>
+<button onclick="show('progress')">Progress</button>
+</nav>
+
+<main>
+
+<section id="home">
+<div class="card">
+<h2>🔥 MASSA MAQSADI</h2>
+<div class="stats">
+<div class="stat"><div class="gold">Hozir</div><div class="big">58 kg</div></div>
+<div class="stat"><div class="gold">Maqsad</div><div class="big">70 kg</div></div>
+<div class="stat"><div class="gold">Qolgan</div><div class="big" id="remain">12 kg</div></div>
+<div class="stat"><div class="gold">Bajarilgan</div><div class="big" id="done">0</div></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p class="sub">4 kunlik professional mashg‘ulot rejasi</p>
+</div>
+
+<div class="card">
+<h2 class="gold">📅 HAFTALIK REJA</h2>
+<p>🟥 Dushanba — Ko‘krak + Triceps</p>
+<p>🟦 Seshanba — Orqa + Biceps</p>
+<p>🟩 Payshanba — Oyoq + Qorin</p>
+<p>🟨 Shanba — Yelka + Qo‘l</p>
+</div>
+</section>
+
+<section id="workout" class="hidden">
+<div class="card">
+<h2 class="gold">💪 MASHQLAR</h2>
+<select id="day" onchange="render()">
+<option value="mon">Dushanba — Ko‘krak + Triceps</option>
+<option value="tue">Seshanba — Orqa + Biceps</option>
+<option value="thu">Payshanba — Oyoq + Qorin</option>
+<option value="sat">Shanba — Yelka + Qo‘l</option>
+</select>
+<div id="list"></div>
+</div>
+</section>
+
+<section id="food" class="hidden">
+<div class="card">
+<h2 class="gold">🍗 MASSA OVQAT</h2>
+<p>🥚 Tuxum + non + sut</p>
+<p>🍚 Guruch + go‘sht + sabzavot</p>
+<p>🍌 Banan + sut</p>
+<p>🥔 Kartoshka + tuxum/go‘sht</p>
+<p>🥛 Qatiq yoki tvorog</p>
+<p>💧 Kun davomida yetarli suv ich.</p>
+</div>
+</section>
+
+<section id="progress" class="hidden">
+<div class="card">
+<h2 class="gold">📈 PROGRESS</h2>
+<p>58 kg → 70 kg</p>
+<input id="weight" type="number" placeholder="Hozirgi kg">
+<button class="action" onclick="saveWeight()">Saqlash</button>
+<p id="weightText"></p>
+</div>
+</section>
+
+</main>
+
+<script>
+const data={
+mon:[
+["Bench Press","Ko‘krak","4 × 8–10"],
+["Incline Dumbbell Press","Yuqori ko‘krak","3 × 8–12"],
+["Cable Fly","Ko‘krak","3 × 12–15"],
+["Dumbbell Pullover","Ko‘krak","3 × 10–12"],
+["Triceps Pushdown","Triceps","3 × 10–15"],
+["Overhead Triceps Extension","Triceps","3 × 10–12"],
+["Close Grip Bench Press","Triceps","3 × 8–10"],
+["Push-up","Ko‘krak","2 × imkoniyatgacha"]
+],
+tue:[
+["Lat Pulldown","Orqa","4 × 8–12"],
+["Seated Cable Row","Orqa","3 × 8–12"],
+["Dumbbell Row","Orqa","3 × 10–12"],
+["Face Pull","Orqa/yelka","3 × 12–15"],
+["Straight Arm Pulldown","Qanot","3 × 12–15"],
+["Dumbbell Curl","Biceps","3 × 10–12"],
+["Hammer Curl","Biceps","3 × 10–12"],
+["Preacher Curl","Biceps","3 × 10–12"]
+],
+thu:[
+["Squat","Oyoq","4 × 8–10"],
+["Leg Press","Son","3 × 10–12"],
+["Romanian Deadlift","Orqa son","3 × 8–12"],
+["Leg Curl","Orqa son","3 × 10–15"],
+["Leg Extension","Old son","3 × 10–15"],
+["Calf Raise","Boldir","4 × 12–20"],
+["Cable Crunch","Qorin","3 × 12–15"],
+["Plank","Qorin","3 × 30–60 soniya"]
+],
+sat:[
+["Overhead Press","Yelka","3 × 8–10"],
+["Lateral Raise","Yon yelka","4 × 12–15"],
+["Rear Delt Fly","Orqa yelka","3 × 12–15"],
+["Close Grip Bench Press","Triceps","3 × 8–10"],
+["Triceps Pushdown","Triceps","3 × 10–15"],
+["Dumbbell Curl","Biceps","3 × 10–12"],
+["Hammer Curl","Biceps","3 × 10–12"],
+["Reverse Curl","Bilak","3 × 12–15"]
+]};
+
+let completed=Number(localStorage.getItem("done")||0);
+
+function show(id){
+document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+event.target.classList.add("active");
+}
+
+function render(){
+let d=data[document.getElementById("day").value];
+document.getElementById("list").innerHTML=d.map((x,i)=>`
+<div class="exercise">
+<h3>${i+1}. ${x[0]}</h3>
+<div class="tag">${x[1]} • ${x[2]}</div>
+<div>
+<input type="number" placeholder="kg">
+<input type="number" placeholder="reps">
+</div>
+<button class="action" onclick="finish(this)">✅ Bajarildi</button>
+</div>`).join("");
+}
+
+function finish(btn){
+if(!btn.classList.contains("done")){
+btn.classList.add("done");
+btn.textContent="✅ Tayyor";
+completed++;
+localStorage.setItem("done",completed);
+document.getElementById("done").textContent=completed;
+}
+}
+
+function saveWeight(){
+let w=Number(document.getElementById("weight").value);
+if(!w)return;
+let percent=Math.min(100,Math.max(0,(w-58)/(70-58)*100));
+document.getElementById("weightText").innerHTML=
+`Hozirgi vazn: <b>${w} kg</b><br>Maqsad: <b>70 kg</b><br>Progress: <b>${Math.round(percent)}%</b>`;
+}
+
+document.getElementById("done").textContent=completed;
+document.getElementById("bar").style.width=((58-50)/(70-50)*100)+"%";
+render();
+</script>
+
+</body>
+</html>
